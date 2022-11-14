@@ -1,0 +1,60 @@
+There are 3 steps of processing videos
+1. Making audio
+2. Making photos
+3. Making vidoes
+
+Two different sub projets are built for these 3 operataions. (a) AudioVideo and (b) ScreenShotter. You'll find both of these in repopsitory. First, run AudioVideo for making audio. Then run ScreenShotter for making photos. Then run AudioVideo again to make final video outputs. 
+
+Now lets explain setup and processes of each of these projects in detail. 
+
+
+
+[STEP 1]
+-|AudioVideo
+  -|Setup of the project
+    -|This is a maven project, add the following mvn dependencies, if you don't clone the project from github and want to make it from scratch
+    -|java-flac-encoder-0.3.8.jar
+    -|java-google-speech-api-V2.1.jar
+    -|jlayer-1.0.1.jar
+    -|json-20150729.jar
+    -|These are all, now these will be imported and used in codes
+  -|Processes and flow
+    -|So, the process begins in Main.java
+    -|Each of the books have a function for it, consider Bukhari() function
+      -|Takes input for wheather you want to do step 1 (make audio) or step 2(make video), also asks for number of hadis to proceed
+        -|YOU MUST KEEP your book and hadis like: F://book-name//hadis-number//text.txt (example: F://Bukhari//0234//text.txt -this contains hadis #234 of bukhari)
+        -|Read the hadis from file drive
+        -|Google T2S api can't take texts longer than 1500(aprox.) latters
+        -|So, the next step is break down the hadis text into <1000 latter chunks which will be stored like ....//0234//texts//1.txt .. 2.txt .. so on.
+        -|Now, using the Audio class, modify the text. Why? because google API is not smart for handling hadis text such as (সা.) should be readed as সাল্লাল্লাহু আলাইহি ওয়া সাল্লাম. Also, additional works like adding fulstop instead of "।" and more commas will be added so that it makes better quality of reading. 
+        -|Then the modified text is sent to google T2S api and file is saved in sub files. like: ....//0234//audios//1.mp3 or 2.mp3 and so on. 
+        -|Done...
+
+[STEP 2]
+-|ScreenShotter
+  -|Setup of the project
+    -|Well, this one requires a lot of jar files.
+    -|All of those are added in ScreenShotter project repository in external libraries folder
+  -|Processes and flow
+    -|For each of the sub texts, 
+      -|(There must be a photos folder in F drive containing all background photos and fonts which is addedd in the project repo as well)
+      -|Make a html file in F://photos//webpage.html
+      -|Take screenshot of the webpage using selenium web driver
+      -|Save the screen shot as hadis-number//photos//sub.jpg (sub=1,2,3...n)
+      -|Done...
+
+[STEP 3]
+-|AudioVideo
+  -|Setup of the project: previous setup
+  -|Processes and flow: Each of the previouly created sub photos and audios are accessed from file system
+  -|Audio and photo files are merged to a new sub video using merger class like: ....//0234//videos//1.mp4 or 2.mp4 so on
+  -|Again all of the sub videos are merged into a output.mp4 file using merger class
+    -|mergePhotoAndAudio(): this one is straight forward.
+    -|mergeAudioAndVideo(): this one requires ffmpeg.exe and is a critical work, this is how it works - 
+      -|Copy and paste the ffmpeg.exe file into the hadis number directory 
+      -|Then using command prompt, run the ffmpeg.exe and merge files
+    -|mergeVideos(): Same as previous one
+    -|Done...
+
+
+If the API doesn't work, this might help: https://www.chromium.org/developers/how-tos/api-keys/
